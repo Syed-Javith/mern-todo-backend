@@ -26,3 +26,6 @@ connectToMongo();
 app.listen(PORT, () => {
   console.log("Server started at port " + PORT);
 });
+
+
+// "dev" :"nodemon server.js"
