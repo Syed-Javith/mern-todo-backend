@@ -6,25 +6,23 @@ const BodyParser = require('./middlewares/bodyParserMiddleware');
 const Cors = require('./middlewares/corsMiddleware');
 const StaticMiddleware = require('./middlewares/staticMiddleware');
 
-
-
-
-// mongodb://127.0.0.1:27017/todolist
-
 dotenv.config();
-const PORT = process.env.PORT
-const port = 5000
+const PORT = process.env.PORT || 3000; // Use a default port if PORT is not defined
 const app = express();
+
+// Middleware
 app.use(Cors);
 app.use(express.json());
 app.use(BodyParser);
-
 app.use(StaticMiddleware);
-app.use('/',userRoutes);
 
+// Routes
+app.use('/', userRoutes);
 
+// Connect to MongoDB
 connectToMongo();
 
-app.listen( PORT || port , ()=>{
-console.log("server started at port "+PORT);
-})
+// Start the server
+app.listen(PORT, () => {
+  console.log("Server started at port " + PORT);
+});
