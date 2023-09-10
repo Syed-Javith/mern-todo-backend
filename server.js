@@ -9,6 +9,7 @@ const StaticMiddleware = require('./middlewares/staticMiddleware');
 
 
 
+// mongodb://127.0.0.1:27017/todolist
 
 dotenv.config();
 const PORT = process.env.PORT
