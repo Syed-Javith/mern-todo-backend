@@ -38,64 +38,50 @@ router.get('/user/:userid', async(req,res)=>{
     console.log(req.params);
 })
 
-router.post('/user/:userid',async(req,res)=>{
-
+router.post('/user/:userid', async (req, res) => {
     console.log("making new user...");
 
-    // console.log(req.body);
     let data = {
-        user : null ,
-        task : null 
+        user: null,
+        task: null,
+        isUserAlreadyFound: false, // Initialize this flag
     };
-    await user.findOne( {
-        userid : req.params.userid
-    } )
-    .then((result) => {
-        // res.status(200).send(result);
-        data.user = result;
-        // data.push(result);
-    }).catch((err) => {
-        console.log(err);
-        res.status(400).send(err);
-    });
-    if(data.user != null){
-        data.isUserAlreadyFound = true;
-        res.status(400).send(data);
-    }else{
-        const newUser = new user(
-            {
-                userid : req.params.userid,
-                userName : req.body.userName ,
-                password : req.body.password
-            }
-        );
-    
-        const newTask = new task({
-            userid : req.params.userid,
-            task : [] 
-        })
-        console.log(newUser);
-        await newUser.save()
-        .then((result) => {
-            console.log(result);
-            // res.status(200).send(result);
-        }).catch((err) => {
-            console.log(err);
-            res.status(400).send(err);
-        });
-     
-        await newTask.save()
-        .then((result) => {
-            console.log(result);
-            res.status(200).send(result);
-        }).catch((err) => {
-            console.log(err);
-            res.status(400).send(err);
-        });
-    }
-    
 
-})
+    try {
+        const existingUser = await user.findOne({
+            userid: req.params.userid
+        });
+
+        if (existingUser) {
+            data.user = existingUser;
+            data.isUserAlreadyFound = true;
+        } else {
+            const newUser = new user({
+                userid: req.params.userid,
+                userName: req.body.userName,
+                password: req.body.password
+            });
+
+            const newTask = new task({
+                userid: req.params.userid,
+                task: []
+            });
+
+            console.log(newUser);
+
+            await newUser.save();
+            console.log("User saved successfully.");
+
+            await newTask.save();
+            console.log("Task saved successfully.");
+        }
+
+        res.status(200).send(data);
+    } catch (err) {
+        console.error(err);
+        res.status(400).send(err);
+    }
+});
 
 router.post('/user/:userid/:taskid',async (req,res)=>{
 
